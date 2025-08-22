@@ -17,7 +17,7 @@ def createScene(rootNode):
     goal = rootNode.addChild('goal')                                                 ##--> Define a target position (goal) to reach wih the EEF
     goal.addObject('EulerImplicitSolver', firstOrder=True)
     goal.addObject('CGLinearSolver', iterations=100, tolerance=1e-5, threshold=1e-5)
-    goal.addObject('MechanicalObject', name='goalMO', position=[[-230, 15, 0]])      ##--> Define a starting position
+    goal.addObject('MechanicalObject', name='goalMO', position=[[-195, 15, 0]])      ##--> Define a starting position
     goal.addObject('SphereCollisionModel', radius=5, group=3)
     goal.addObject('UncoupledConstraintCorrection')                                  ##--> Required to move it with the mouse
 
@@ -28,7 +28,7 @@ def createScene(rootNode):
     model.addObject('EulerImplicitSolver', rayleighStiffness=0.2, rayleighMass=0.2)
     model.addObject('SparseLDLSolver')
 
-    model.addObject('MeshVTKLoader', name='loader', filename='PneuNets_remeshed.vtk')
+    model.addObject('MeshVTKLoader', name='loader', filename='../PneuNets_remeshed.vtk')
     model.addObject('MeshTopology', src='@loader', name='container')
 
     model.addObject('MechanicalObject')
@@ -57,7 +57,7 @@ def createScene(rootNode):
     # Pressure Actuator                      #
     ##########################################
     cavity = model.addChild('cavity')
-    cavity.addObject('MeshSTLLoader', name='loader', filename='PneuNets_Cavity.stl')
+    cavity.addObject('MeshSTLLoader', name='loader', filename='../PneuNets_Cavity.stl')
     cavity.addObject('MeshTopology', src=cavity.loader.linkpath, name='topo')
     cavity.addObject('MechanicalObject', name='cavity')
     cavity.addObject('SurfacePressureConstraint', name='SPC',template='Vec3', triangles=cavity.topo.triangles.linkpath,
@@ -79,7 +79,7 @@ def createScene(rootNode):
     # Visualization                          #
     ##########################################
     modelVisu = model.addChild('visu')
-    modelVisu.addObject('MeshSTLLoader', filename="PneuNets.stl", name="loader")
+    modelVisu.addObject('MeshSTLLoader', filename="../PneuNets.stl", name="loader")
     modelVisu.addObject('OglModel', src=modelVisu.loader.linkpath, color=[0.7, 0.7, 0.7, 0.6])
     modelVisu.addObject('BarycentricMapping')
 

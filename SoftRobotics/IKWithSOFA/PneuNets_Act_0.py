@@ -20,7 +20,7 @@ def createScene(rootNode):
     model.addObject('EulerImplicitSolver', rayleighStiffness=0.2, rayleighMass=0.2)
     model.addObject('SparseLDLSolver')
 
-    model.addObject('MeshVTKLoader', name='loader', filename='PneuNets_remeshed.vtk')
+    model.addObject('MeshVTKLoader', name='loader', filename='../PneuNets_remeshed.vtk')
     model.addObject('MeshTopology', src='@loader', name='container')
 
     model.addObject('MechanicalObject')
@@ -40,7 +40,7 @@ def createScene(rootNode):
     # Pressure Actuator                      #
     ##########################################
     cavity = model.addChild('cavity')
-    cavity.addObject('MeshSTLLoader', name='loader', filename='PneuNets_Cavity.stl') ##--> Load the surface mesh on which the pressure will be applied
+    cavity.addObject('MeshSTLLoader', name='loader', filename='../PneuNets_Cavity.stl') ##--> Load the surface mesh on which the pressure will be applied
     cavity.addObject('MeshTopology', src=cavity.loader.linkpath, name='topo')
     cavity.addObject('MechanicalObject', name='cavity')
     cavity.addObject('SurfacePressureConstraint', name='SPC',template='Vec3', triangles=cavity.topo.triangles.linkpath,
@@ -52,7 +52,7 @@ def createScene(rootNode):
     # Visualization                          #
     ##########################################
     modelVisu = model.addChild('visu')
-    modelVisu.addObject('MeshSTLLoader', filename="PneuNets.stl", name="loader")
+    modelVisu.addObject('MeshSTLLoader', filename="../PneuNets.stl", name="loader")
     modelVisu.addObject('OglModel', src=modelVisu.loader.linkpath, color=[0.7, 0.7, 0.7, 0.6])
     modelVisu.addObject('BarycentricMapping')
 

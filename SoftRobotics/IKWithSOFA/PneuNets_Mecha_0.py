@@ -19,7 +19,7 @@ def createScene(rootNode):
     model.addObject('EulerImplicitSolver', rayleighStiffness=0.2, rayleighMass=0.2)  ##--> Our integration scheme
     model.addObject('SparseLDLSolver')                                               ##--> Linear solver used to inverse A
 
-    model.addObject('MeshVTKLoader', name='loader', filename='PneuNets_remeshed.vtk')         ##--> Load our topology
+    model.addObject('MeshVTKLoader', name='loader', filename='../PneuNets_remeshed.vtk')         ##--> Load our topology
     model.addObject('MeshTopology', src='@loader', name='container')
 
     model.addObject('MechanicalObject')                                              ##--> Contain all problem vectors
@@ -36,7 +36,7 @@ def createScene(rootNode):
     # Visualization                          #
     ##########################################
     modelVisu = model.addChild('visu')                                               ##--> Add visualization
-    modelVisu.addObject('MeshSTLLoader', filename="PneuNets.stl", name="loader")
+    modelVisu.addObject('MeshSTLLoader', filename="../PneuNets.stl", name="loader")
     modelVisu.addObject('OglModel', src=modelVisu.loader.linkpath, color=[0.7, 0.7, 0.7, 0.6])
     modelVisu.addObject('BarycentricMapping')
 
