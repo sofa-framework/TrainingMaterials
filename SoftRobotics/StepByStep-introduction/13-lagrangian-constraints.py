@@ -5,7 +5,7 @@ def createScene(rootNode):
 	rootNode.gravity = [ 0., -9.81 ,0.]
 
 	rootNode.addObject('FreeMotionAnimationLoop') # 1. Required for Lagrangian constraints
-	rootNode.addObject('GenericConstraintSolver', maxIterations=1000, tolerance=0.001) # 2. Solver that will compute the Lagrangian multiplier value
+	rootNode.addObject('BlockGaussSeidelConstraintSolver', maxIterations=1000, tolerance=0.001) # 2. Solver that will compute the Lagrangian multiplier value
 
 	
 	rootNode.addObject('RequiredPlugin', pluginName=['Sofa.Component.StateContainer','Sofa.Component.Mass','Sofa.Component.MechanicalLoad',
@@ -17,7 +17,8 @@ def createScene(rootNode):
 													 'Sofa.Component.Collision.Detection.Intersection','Sofa.Component.Collision.Detection.Algorithm',
 													 'Sofa.Component.Collision.Response.Contact', 'Sofa.GUI.Component','Sofa.Component.AnimationLoop',
 													 'Sofa.Component.Constraint.Lagrangian.Correction','Sofa.Component.Constraint.Lagrangian.Correction',
-													 'Sofa.Component.Constraint.Lagrangian.Solver','Sofa.Component.LinearSolver.Direct'])
+													 'Sofa.Component.Constraint.Lagrangian.Solver','Sofa.Component.LinearSolver.Direct',
+													 'Sofa.Component.Constraint.Lagrangian.Model'])
 
 	rootNode.addObject("MeshVTKLoader", name="meshLoaderCoarse", filename="../PneuNets_remeshed.vtk")
 	rootNode.addObject('ConstraintAttachButtonSetting')
