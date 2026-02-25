@@ -2,15 +2,21 @@ import os
 
 
 def createScene(rootNode):
-    rootNode.addObject('RequiredPlugin', pluginName=['SoftRobots', 'SoftRobots.Inverse'])
+    rootNode.addObject('RequiredPlugin', pluginName=['Sofa.Component.AnimationLoop',
+        'Sofa.Component.Constraint.Lagrangian.Correction','Sofa.Component.Constraint.Lagrangian.Solver',
+        'Sofa.Component.Engine.Select','Sofa.Component.IO.Mesh','Sofa.Component.LinearSolver.Direct','Sofa.Component.Mapping.Linear',
+        'Sofa.Component.Mass','Sofa.Component.ODESolver.Backward','Sofa.Component.SolidMechanics.FEM.Elastic',
+        'Sofa.Component.SolidMechanics.Spring','Sofa.Component.StateContainer','Sofa.Component.Topology.Container.Constant',
+        'Sofa.Component.Visual','Sofa.GL.Component.Rendering3D', 'Sofa.GUI.Component'])
+
     rootNode.addObject('VisualStyle',
                        displayFlags='showVisualModels showBehaviorModels showCollisionModels '
                                     'hideBoundingCollisionModels hideForceFields '
                                     'showInteractionForceFields hideWireframe')
     rootNode.addObject('AttachBodyButtonSetting',stiffness=1)
 
-    rootNode.addObject('FreeMotionAnimationLoop')                                    ##--> Required for lagrangian constraints
-    rootNode.addObject('GenericConstraintSolver')                                    ##--> Solver that will compute the lagrangian multiplier value
+    rootNode.addObject('FreeMotionAnimationLoop')
+    rootNode.addObject('BlockGaussSeidelConstraintSolver', maxIterations=1000, tolerance=0.001)
 
     ##########################################
     # FEM Model                              #

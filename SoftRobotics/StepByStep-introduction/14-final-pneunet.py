@@ -12,7 +12,7 @@ def createScene(rootNode):
                                                 'Sofa.Component.Constraint.Projective','Sofa.Component.Engine.Select',
                                                 'Sofa.Component.Constraint.Lagrangian.Correction','Sofa.Component.Constraint.Lagrangian.Model',
                                                 'Sofa.Component.Constraint.Lagrangian.Solver','Sofa.Component.LinearSolver.Direct',
-                                                'Sofa.Component.AnimationLoop','Sofa.GUI.Component'])
+                                                'Sofa.Component.AnimationLoop','Sofa.GUI.Component','Sofa.Component.Constraint.Lagrangian.Model'])
 
     rootNode.addObject('VisualStyle',
                 displayFlags='showVisualModels showBehaviorModels showCollisionModels '
@@ -20,7 +20,7 @@ def createScene(rootNode):
                             'showInteractionForceFields hideWireframe')
 
     rootNode.addObject('FreeMotionAnimationLoop')                                    ##--> Required for Lagrangian constraints
-    rootNode.addObject('GenericConstraintSolver', maxIterations=1000, tolerance=0.001) ##--> Solver that will compute the Lagrangian multiplier value
+    rootNode.addObject('BlockGaussSeidelConstraintSolver', maxIterations=1000, tolerance=0.001) ##--> Solver that will compute the Lagrangian multiplier value
 
     rootNode.addObject('ConstraintAttachButtonSetting')
 
