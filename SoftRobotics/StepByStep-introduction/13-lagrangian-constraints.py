@@ -61,7 +61,7 @@ def createScene(rootNode):
 	collisionlModel.addObject("MeshTopology", name="topologyContainer", src=visualModel.loader.linkpath) 
 	collisionlModel.addObject('MechanicalObject', name="StoringForces")
 	collisionlModel.addObject('TriangleCollisionModel', name="CollisionModel") # Remove the contactStiffness which becomes meaningless
-	collisionlModel.addObject('BarycentricMapping', name="VisualMapping", input="@../StateContainer", output="@StoringForces")
+	collisionlModel.addObject('BarycentricMapping', name="CollisionMapping", input="@../StateContainer", output="@StoringForces")
 	
     
 	fallingParticle = rootNode.addChild("ParticleToCollideWith")

@@ -58,7 +58,7 @@ def createScene(rootNode):
 	collisionlModel.addObject("MeshTopology", name="topologyContainer", src=visualModel.loader.linkpath) # Use the same mesh topology than the visual model
 	collisionlModel.addObject('MechanicalObject', name="StoringForces") # Mechanical object storing the DoFs corresponding to the contact points and associated forces
 	collisionlModel.addObject('TriangleCollisionModel', name="CollisionModel", contactStiffness=3) # Triangular primitives used at the narrow phase
-	collisionlModel.addObject('BarycentricMapping', name="VisualMapping", input="@../StateContainer", output="@StoringForces") # Barycentric mapping connecting the two representations with different topologies
+	collisionlModel.addObject('BarycentricMapping', name="CollisionMapping", input="@../StateContainer", output="@StoringForces") # Barycentric mapping connecting the two representations with different topologies
 	
     
     ##########################################
