@@ -34,7 +34,7 @@ class AddingParticles(Sofa.Core.Controller):
 	def removeFallingParticle(self, node):
 		iteration_loc = self.iteration - 1
 		if iteration_loc >= 0:
-			name = 'ParticleToCollideWith-'+str(iteration_loc)
+			name = "ParticleToCollideWith-"+str(iteration_loc)
 			nodeToDelete = self.rootNode.getChild(str(name))
 			for obj in nodeToDelete.objects:
 				nodeToDelete.removeObject(obj)
@@ -43,7 +43,7 @@ class AddingParticles(Sofa.Core.Controller):
 			self.iteration = iteration_loc
     
 	def onKeypressedEvent(self, event):
-		key = event['key']
+		key = event["key"]
 
 		if key==uparrow :
 			self.addFallingParticle(self.rootNode)
@@ -54,65 +54,65 @@ class AddingParticles(Sofa.Core.Controller):
 
 def createScene(rootNode):
 
-	rootNode.name = "rootNode"
+	rootNode.name = "RootNode"
 	rootNode.dt = 0.01
 	rootNode.gravity = [ 0., -9.81 ,0.]
 
-	rootNode.addObject("DefaultAnimationLoop", computeBoundingBox=False)
+	rootNode.addObject("DefaultAnimationLoop", name="animation_loop", computeBoundingBox=False)
 	
-	rootNode.addObject('RequiredPlugin', pluginName=['Sofa.Component.StateContainer','Sofa.Component.Mass','Sofa.Component.MechanicalLoad',
-												     'Sofa.Component.LinearSolver.Iterative','Sofa.Component.ODESolver.Backward',
-													 'Sofa.Component.IO.Mesh','Sofa.Component.Topology.Container.Dynamic',
-													 'Sofa.Component.SolidMechanics.FEM.Elastic','Sofa.Component.Topology.Container.Constant',
-													 'Sofa.Component.Visual','Sofa.Component.Mapping.Linear','Sofa.GL.Component.Rendering3D',
-													 'Sofa.Component.Constraint.Projective','Sofa.Component.Engine.Select','Sofa.Component.Collision.Geometry',
-													 'Sofa.Component.Collision.Detection.Intersection','Sofa.Component.Collision.Detection.Algorithm',
-													 'Sofa.Component.Collision.Response.Contact', 'Sofa.GUI.Component'])
+	rootNode.addObject("RequiredPlugin", pluginName=["Sofa.Component.StateContainer","Sofa.Component.Mass","Sofa.Component.MechanicalLoad",
+												     "Sofa.Component.LinearSolver.Iterative","Sofa.Component.ODESolver.Backward",
+													 "Sofa.Component.IO.Mesh","Sofa.Component.Topology.Container.Dynamic",
+													 "Sofa.Component.SolidMechanics.FEM.Elastic","Sofa.Component.Topology.Container.Constant",
+													 "Sofa.Component.Visual","Sofa.Component.Mapping.Linear","Sofa.GL.Component.Rendering3D",
+													 "Sofa.Component.Constraint.Projective","Sofa.Component.Engine.Select","Sofa.Component.Collision.Geometry",
+													 "Sofa.Component.Collision.Detection.Intersection","Sofa.Component.Collision.Detection.Algorithm",
+													 "Sofa.Component.Collision.Response.Contact", "Sofa.GUI.Component"])
 
-	rootNode.addObject("MeshVTKLoader", name="meshLoaderCoarse", filename="../PneuNets_remeshed.vtk")
-	rootNode.addObject('AttachBodyButtonSetting',stiffness=1)
+	rootNode.addObject("MeshVTKLoader", name="mesh_loader_coarse", filename="../PneuNets_remeshed.vtk")
+	rootNode.addObject("AttachBodyButtonSetting", name="mouse_config", stiffness=1)
 	
-	rootNode.addObject('VisualStyle', displayFlags='showForceFields showCollisionModels showBehaviorModels showDetectionOutputs')
+	rootNode.addObject("VisualStyle", name="visual_options", displayFlags="showForceFields showCollisionModels showBehaviorModels showDetectionOutputs")
 
     ##########################################
     # Collision pipeline definition : broad phase / narrow phase / response
-	rootNode.addObject('CollisionPipeline')
-	rootNode.addObject('BruteForceBroadPhase') # Broad phase
-	rootNode.addObject('BVHNarrowPhase') # Narrow phase
-	rootNode.addObject('MinProximityIntersection', name="Proximity", alarmDistance="0.5", contactDistance="0.25") #Intersection method used for the narrow phase
-	rootNode.addObject('CollisionResponse', name="Response", response="PenalityContactForceField") # Reponse method when a contact is detected in the narrow phase
+	rootNode.addObject("CollisionPipeline", name="collision_pipeline")
+	rootNode.addObject("BruteForceBroadPhase", name="broad_phase") # Broad phase
+	rootNode.addObject("BVHNarrowPhase", name="narrow_phase") # Narrow phase
+	rootNode.addObject("MinProximityIntersection", name="narrow_phase_intersection", alarmDistance="0.5", contactDistance="0.25") #Intersection method used for the narrow phase
+	rootNode.addObject("CollisionResponse", name="collision_response", response="PenalityContactForceField") # Reponse method when a contact is detected in the narrow phase
 	##########################################
 	
 	mechanicalModel = rootNode.addChild("Finger")
 	
-	mechanicalModel.addObject("EulerImplicitSolver")
-	mechanicalModel.addObject("CGLinearSolver", iterations=200, tolerance=1e-09, threshold=1e-09)
+	mechanicalModel.addObject("EulerImplicitSolver", name="integration_scheme")
+	mechanicalModel.addObject("CGLinearSolver", name="iterative_linear_solver", iterations=200, tolerance=1e-09, threshold=1e-09)
 	
-	mechanicalModel.addObject("MeshTopology", name="topologyContainer", src="@../meshLoaderCoarse" )
+	mechanicalModel.addObject("MeshTopology", name="topology_container", src="@../mesh_loader_coarse" )
 
-	mechanicalModel.addObject("MechanicalObject", template="Vec3", name="StateContainer", showObject=True)
+	mechanicalModel.addObject("MechanicalObject", template="Vec3", name="state_container", showObject=True)
 	
-	mechanicalModel.addObject('TetrahedronFEMForceField', template='Vec3', poissonRatio=0.3, youngModulus=100)
-	mechanicalModel.addObject('MeshMatrixMass', template='Vec3,Vec3', totalMass=0.5)
+	mechanicalModel.addObject("TetrahedronFEMForceField", name="elastic_material_law", template="Vec3", poissonRatio=0.3, youngModulus=100)
+	mechanicalModel.addObject("MeshMatrixMass", name="mass", template="Vec3,Vec3", totalMass=0.5)
 	
-	mechanicalModel.addObject('BoxROI', name='boxROI', box=[-10, 0, -20, 0, 30, 20], drawBoxes=True,
-						      position=mechanicalModel.StateContainer.position.linkpath,
-							  tetrahedra=mechanicalModel.topologyContainer.tetrahedra.linkpath)
-	mechanicalModel.addObject('FixedProjectiveConstraint', indices=mechanicalModel.boxROI.indices.linkpath)
+	mechanicalModel.addObject("BoxROI", name="box_ROI", box=[-10, 0, -20, 0, 30, 20], drawBoxes=True,
+						      position=mechanicalModel.state_container.position.linkpath,
+							  tetrahedra=mechanicalModel.topology_container.tetrahedra.linkpath)
+	mechanicalModel.addObject("FixedProjectiveConstraint", name="fixed_boundary", indices=mechanicalModel.box_ROI.indices.linkpath)
 
 	
 	visualModel = mechanicalModel.addChild("Visual")
-	visualModel.addObject('MeshSTLLoader', name="loader", filename="../PneuNets_remeshed.stl")
-	visualModel.addObject('OglModel', name="VisualModel", src=visualModel.loader.linkpath, color=[0.7, 0.7, 0.7, 1])
-	visualModel.addObject('BarycentricMapping', name="VisualMapping", input="@../StateContainer", output="@VisualModel")
+	visualModel.addObject("MeshSTLLoader", name="mesh_loader_surface", filename="../PneuNets_remeshed.stl")
+	visualModel.addObject("OglModel", name="visual_model", src=visualModel.mesh_loader_surface.linkpath, color=[0.7, 0.7, 0.7, 1])
+	visualModel.addObject("BarycentricMapping", name="visual_mapping", input="@../state_container", output="@visual_model")
 	
 	##########################################
 	# Collision representation of the finger object
 	collisionlModel = mechanicalModel.addChild("Collision")
-	collisionlModel.addObject("MeshTopology", name="topologyContainer", src=visualModel.loader.linkpath) # Use the same mesh topology than the visual model
-	collisionlModel.addObject('MechanicalObject', name="StoringForces") # Mechanical object storing the DoFs corresponding to the contact points and associated forces
-	collisionlModel.addObject('TriangleCollisionModel', name="CollisionModel", contactStiffness=2) # Triangular primitives used at the narrow phase
-	collisionlModel.addObject('BarycentricMapping', name="CollisionMapping", input="@../StateContainer", output="@StoringForces") # Barycentric mapping connecting the two representations with different topologies
+	collisionlModel.addObject("MeshTopology", name="topology_container", src=visualModel.mesh_loader_surface.linkpath) # Use the same mesh topology than the visual model
+	collisionlModel.addObject("MechanicalObject", name="storing_forces") # Mechanical object storing the DoFs corresponding to the contact points and associated forces
+	collisionlModel.addObject("TriangleCollisionModel", name="triangle_collision_model", contactStiffness=3) # Triangular primitives used at the narrow phase
+	collisionlModel.addObject("BarycentricMapping", name="collision_mapping", input="@../state_container", output="@storing_forces") # Barycentric mapping connecting the two representations with different topologies
 
 	rootNode.addObject( AddingParticles(name="AddingParticles", rootNode=rootNode) )
 
