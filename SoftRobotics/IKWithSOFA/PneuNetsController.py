@@ -31,17 +31,17 @@ class PneuNetsController(Sofa.Core.Controller):
         spcValue = self.node.cavity.SPC.value
         caValue = self.node.cable.CA.value
 
-        if((e["key"] == Sofa.constants.Key.KP_1) or (e["key"] == Sofa.constants.Key.KP_3)):
-            if e["key"] == Sofa.constants.Key.KP_1:
+        if((ord(e["key"]) == 19) or (ord(e["key"]) == 21)):
+            if ord(e["key"]) == 19: # Up
                 cableDisplacement = caValue.value[0] + 1.0
-            elif e["key"] == Sofa.constants.Key.KP_3:
+            elif ord(e["key"]) == 21: # Down
                 cableDisplacement = caValue.value[0] - 1.0
             caValue.value = [cableDisplacement]
 
-        if((e["key"] == Sofa.constants.Key.KP_4) or (e["key"] == Sofa.constants.Key.KP_6)):
-            if e["key"] == Sofa.constants.Key.KP_4:
+        if((ord(e["key"]) == 18) or (ord(e["key"]) == 20)):
+            if ord(e["key"]) == 18: # Left
                 volumeFinal = spcValue.value[0] + 1000
-            elif e["key"] == Sofa.constants.Key.KP_6:
+            elif ord(e["key"]) == 20: # Right
                 volumeFinal = spcValue.value[0] - 1000
                 if volumeFinal < 0:
                     volumeFinal = 0
