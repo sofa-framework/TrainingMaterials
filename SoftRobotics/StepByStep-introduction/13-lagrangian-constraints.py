@@ -35,7 +35,7 @@ def createScene(rootNode):
 	mechanicalModel = rootNode.addChild("Finger")
 	
 	mechanicalModel.addObject("EulerImplicitSolver", name="integration_scheme")
-	mechanicalModel.addObject("SparseLDLSolver", name="direct_linear_solver", template="CompressedRowSparseMatrixd") # Linear solver used to inverse A (LDL factorization)
+	mechanicalModel.addObject("SparseLDLSolver", name="linear_solver", template="CompressedRowSparseMatrixd") # Linear solver used to inverse A (LDL factorization)
 	
 	mechanicalModel.addObject("MeshTopology", name="topology_container", src="@../mesh_loader_coarse" )
 

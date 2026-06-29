@@ -7,7 +7,7 @@ def createScene(rootNode):
 	rootNode.addObject("DefaultAnimationLoop", name="animation_loop", computeBoundingBox=False)
 	
 	rootNode.addObject('RequiredPlugin', pluginName=['Sofa.Component.StateContainer','Sofa.Component.Mass','Sofa.Component.MechanicalLoad',
-												     'Sofa.Component.LinearSolver.Iterative','Sofa.Component.ODESolver.Backward',
+												     'Sofa.Component.LinearSolver.Direct','Sofa.Component.ODESolver.Backward',
 													 'Sofa.Component.IO.Mesh','Sofa.Component.Topology.Container.Dynamic',
 													 'Sofa.Component.SolidMechanics.FEM.Elastic','Sofa.Component.Topology.Container.Constant',
 													 'Sofa.Component.Visual','Sofa.Component.Mapping.Linear','Sofa.GL.Component.Rendering3D'])
@@ -17,7 +17,7 @@ def createScene(rootNode):
 	mechanicalModel = rootNode.addChild("Finger")
 	
 	mechanicalModel.addObject("EulerImplicitSolver", name="integration_scheme")
-	mechanicalModel.addObject("CGLinearSolver", name="iterative_linear_solver", iterations=200, tolerance=1e-09, threshold=1e-09)
+	mechanicalModel.addObject("SparseLDLSolver", name="linear_solver", template="CompressedRowSparseMatrixMat3x3d")
 	
 	mechanicalModel.addObject("MeshTopology", name="topology_container", src="@../mesh_loader_coarse" )
 

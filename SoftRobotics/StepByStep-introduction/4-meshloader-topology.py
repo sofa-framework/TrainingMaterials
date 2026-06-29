@@ -7,7 +7,7 @@ def createScene(rootNode):
 	rootNode.addObject("DefaultAnimationLoop", name="animation_loop", computeBoundingBox=False)
 	
 	rootNode.addObject("RequiredPlugin", pluginName=["Sofa.Component.StateContainer","Sofa.Component.Mass","Sofa.Component.MechanicalLoad",
-												     "Sofa.Component.LinearSolver.Iterative","Sofa.Component.ODESolver.Backward",
+												     "Sofa.Component.LinearSolver.Direct","Sofa.Component.ODESolver.Backward",
 													 "Sofa.Component.IO.Mesh","Sofa.Component.Topology.Container.Dynamic"])
 	
 	# Mesh loader taking a file as input (relative or absolute path)
@@ -16,7 +16,7 @@ def createScene(rootNode):
 	particleNode = rootNode.addChild("Particle") # bbox is no longer needed since we do load a volumetric mesh
 	
 	particleNode.addObject("EulerImplicitSolver", name="integration_scheme")
-	particleNode.addObject("CGLinearSolver", name="iterative_linear_solver", iterations=200, tolerance=1e-09, threshold=1e-09)
+	particleNode.addObject("SparseLDLSolver", name="linear_solver", template="CompressedRowSparseMatrixMat3x3d")
 	
     # Topology container (SetTopologyContainer depicts dynamic topology containers)
 	# Automatically filled by the MeshLoader using the source link "src=@"
