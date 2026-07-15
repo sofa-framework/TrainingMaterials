@@ -19,17 +19,23 @@ class AddingParticles(Sofa.Core.Controller):
 	def generatXPos(self):
 		return self.iteration%11 * 10  -170
 
+	def updateCollisionPipeline(self):
+		self.rootNode.removeObject(self.rootNode.collision_pipeline)
+		self.rootNode.addObject("CollisionPipeline", name="collision_pipeline")
+		self.rootNode.collision_pipeline.init()
+
 	def addFallingParticle(self, node):
 		iteration_loc = self.iteration
 		newParticle = node.addChild("ParticleToCollideWith-"+str(iteration_loc))
 		newParticle.addObject("EulerImplicitSolver")
-		newParticle.addObject("CGLinearSolver", iterations=200, tolerance=1e-09, threshold=1e-09)
+		newParticle.addObject("SparseLDLSolver", name="linear_solver", template="CompressedRowSparseMatrixMat3x3d")
 		newParticle.addObject("MechanicalObject", template="Rigid3", name="myParticle", position=[self.generatXPos(), 80, 0,  0,0,0,1], showObject=True)
 		newParticle.addObject("UniformMass", totalMass=1)
 		newParticle.addObject("ConstantForceField", totalForce=[0,-50,0,0,0,0], indices=0)
 		newParticle.addObject("SphereCollisionModel", radius=self.generateRadius(), contactStiffness=100)
 		newParticle.init()
 		self.iteration = iteration_loc +1
+		self.updateCollisionPipeline()
     
 	def removeFallingParticle(self, node):
 		iteration_loc = self.iteration - 1
@@ -41,6 +47,7 @@ class AddingParticles(Sofa.Core.Controller):
 
 			myParticleNode = self.rootNode.removeChild(str(name))
 			self.iteration = iteration_loc
+			self.updateCollisionPipeline()
     
 	def onKeypressedEvent(self, event):
 		key = event["key"]

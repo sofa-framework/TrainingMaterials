@@ -3,6 +3,6 @@ def createScene(rootNode):
 	rootNode.dt = 0.01			        # Time step
 	rootNode.gravity = [ 0., 0. ,0.]	# Gravitational acceleration applied on the entire scene
 
-	rootNode.addObject("DefaultAnimationLoop", name="animation loop")
+	rootNode.addObject("DefaultAnimationLoop", name="animation_loop")
 
 	rootNode.addChild("MyObject", bbox=[0,0,0,1,1,1])   # bbox is only needed here to define a non-zero simulation space since the scene is empty
