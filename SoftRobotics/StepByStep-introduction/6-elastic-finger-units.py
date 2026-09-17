@@ -1,9 +1,9 @@
 def createScene(rootNode):
 
-	from Sofa.Units.Definitions import s, m, mm, N, g, kg, Pa  
+	from Sofa.Units.Definitions import s, m, mm, N, kg, kPa
 	from Sofa.Units.UnitSystem import MechanicalUnitSystem
 
-	scene_unit = MechanicalUnitSystem(s, m, kg)
+	scene_unit = MechanicalUnitSystem(s, mm, kg)
 
 	rootNode.name = "RootNode"
 	rootNode.dt = scene_unit(0.01, s)
@@ -16,6 +16,7 @@ def createScene(rootNode):
 													 "Sofa.Component.IO.Mesh","Sofa.Component.Topology.Container.Dynamic",
 													 "Sofa.Component.SolidMechanics.FEM.Elastic","Sofa.Component.Topology.Container.Constant",
 													 "Sofa.Component.Visual"])
+
 	rootNode.addObject("VisualStyle", name="visual_options", displayFlags="showForceFields")
 	
 	rootNode.addObject("MeshVTKLoader", name="mesh_loader_coarse", filename="../PneuNets_remeshed.vtk") # Using a VTK file format, thus using MeshVTKLoader
@@ -32,6 +33,6 @@ def createScene(rootNode):
 
 	mechanicalModel.addObject("MechanicalObject", template="Vec3", name="state_container", showObject=True) # Define the template as Vec3 for 3D deformable bodies
 	
-	mechanicalModel.addObject("TetrahedronFEMForceField", name="elastic_material_law", template="Vec3", poissonRatio=0.3, youngModulus=scene_unit(100, Pa)) # Define an elastic constitutive law
-	mechanicalModel.addObject("MeshMatrixMass", name="mass", template="Vec3,Vec3", totalMass=scene_unit(500, g)) # Use a mass integrated over the volume
+	mechanicalModel.addObject("TetrahedronFEMForceField", name="elastic_material_law", template="Vec3", poissonRatio=0.3, youngModulus=scene_unit(800, kPa)) # Define an elastic constitutive law
+	mechanicalModel.addObject("MeshMatrixMass", name="mass", template="Vec3,Vec3", massDensity=scene_unit(1e3, kg/m**3)) # Use a mass integrated over the volume
 	################################################

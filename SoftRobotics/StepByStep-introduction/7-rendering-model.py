@@ -1,8 +1,13 @@
 def createScene(rootNode):
 
+	from Sofa.Units.Definitions import s, m, mm, N, kg, kPa  
+	from Sofa.Units.UnitSystem import MechanicalUnitSystem
+
+	scene_unit = MechanicalUnitSystem(s, mm, kg)
+
 	rootNode.name = "RootNode"
-	rootNode.dt = 0.01
-	rootNode.gravity = [ 0., -9.81 ,0.]
+	rootNode.dt = scene_unit(0.01, s)
+	rootNode.gravity = [0, scene_unit(-9.81, N/kg), 0]
 
 	rootNode.addObject("DefaultAnimationLoop", name="animation_loop", computeBoundingBox=False)
 	
@@ -11,6 +16,7 @@ def createScene(rootNode):
 													 "Sofa.Component.IO.Mesh","Sofa.Component.Topology.Container.Dynamic",
 													 "Sofa.Component.SolidMechanics.FEM.Elastic","Sofa.Component.Topology.Container.Constant",
 													 "Sofa.Component.Visual","Sofa.GL.Component.Rendering3D"])
+	
 	rootNode.addObject("VisualStyle", name="visual_options", displayFlags="showForceFields")
 	
 	rootNode.addObject("MeshVTKLoader", name="mesh_loader_coarse", filename="../PneuNets_remeshed.vtk")
@@ -24,8 +30,8 @@ def createScene(rootNode):
 
 	mechanicalModel.addObject("MechanicalObject", template="Vec3", name="state_container", showObject=True)
 	
-	mechanicalModel.addObject("TetrahedronFEMForceField", name="elastic_material_law", template="Vec3", poissonRatio=0.3, youngModulus=100)
-	mechanicalModel.addObject("MeshMatrixMass", name="mass", template="Vec3,Vec3", totalMass=0.5)
+	mechanicalModel.addObject("TetrahedronFEMForceField", name="elastic_material_law", template="Vec3", poissonRatio=0.3, youngModulus=scene_unit(800, kPa))
+	mechanicalModel.addObject("MeshMatrixMass", name="mass", template="Vec3,Vec3", massDensity=scene_unit(1e3, kg/m**3))
 	
     # Adding a rendering model using the same mesh as for the mechanics
 	mechanicalModel.addObject("OglModel", name="visual_model", topology="@topology_container") # Connect with the object topology (could be connected to the mesh loader too)

@@ -1,5 +1,9 @@
 import Sofa
+from Sofa.Units.Definitions import s, m, mm, N, mN, kg, kPa  
+from Sofa.Units.UnitSystem import MechanicalUnitSystem
 from math import pi, sin
+
+scene_unit = MechanicalUnitSystem(s, mm, kg)
 
 uparrow = chr(19)
 downarrow = chr(21)
@@ -14,10 +18,10 @@ class AddingParticles(Sofa.Core.Controller):
 		self.iteration = 0
 
 	def generateRadius(self):
-		return 2.4*sin(self.iteration/5.5*pi - pi/4) + 2.5
+		return 2.5*sin(self.iteration/5.5*pi - pi/4) + 5
 	
 	def generatXPos(self):
-		return self.iteration%11 * 10  -170
+		return self.iteration%11 * 10  -120
 
 	def updateCollisionPipeline(self):
 		self.rootNode.removeObject(self.rootNode.collision_pipeline)
@@ -29,10 +33,10 @@ class AddingParticles(Sofa.Core.Controller):
 		newParticle = node.addChild("ParticleToCollideWith-"+str(iteration_loc))
 		newParticle.addObject("EulerImplicitSolver")
 		newParticle.addObject("SparseLDLSolver", name="linear_solver", template="CompressedRowSparseMatrixMat3x3d")
-		newParticle.addObject("MechanicalObject", template="Rigid3", name="myParticle", position=[self.generatXPos(), 80, 0,  0,0,0,1], showObject=True)
-		newParticle.addObject("UniformMass", totalMass=1)
-		newParticle.addObject("ConstantForceField", totalForce=[0,-50,0,0,0,0], indices=0)
-		newParticle.addObject("SphereCollisionModel", radius=self.generateRadius(), contactStiffness=100)
+		newParticle.addObject("MechanicalObject", template="Rigid3", name="myParticle", position=[self.generatXPos(), 50, 0,  0,0,0,1], showObject=True)
+		newParticle.addObject("UniformMass", totalMass=0.002)
+		newParticle.addObject("ConstantForceField", totalForce=[0,4.5,0,0,0,0], indices=0)
+		newParticle.addObject("SphereCollisionModel", radius=self.generateRadius(), contactStiffness=50)
 		newParticle.init()
 		self.iteration = iteration_loc +1
 		self.updateCollisionPipeline()
@@ -62,8 +66,8 @@ class AddingParticles(Sofa.Core.Controller):
 def createScene(rootNode):
 
 	rootNode.name = "RootNode"
-	rootNode.dt = 0.01
-	rootNode.gravity = [ 0., -9.81 ,0.]
+	rootNode.dt = scene_unit(0.01, s)
+	rootNode.gravity = [0, scene_unit(-9.81, N/kg), 0]
 
 	rootNode.addObject("DefaultAnimationLoop", name="animation_loop", computeBoundingBox=False)
 	
@@ -76,17 +80,18 @@ def createScene(rootNode):
 													 "Sofa.Component.Collision.Detection.Intersection","Sofa.Component.Collision.Detection.Algorithm",
 													 "Sofa.Component.Collision.Response.Contact", "Sofa.GUI.Component"])
 
-	rootNode.addObject("MeshVTKLoader", name="mesh_loader_coarse", filename="../PneuNets_remeshed.vtk")
-	rootNode.addObject("AttachBodyButtonSetting", name="mouse_config", stiffness=1)
-	
 	rootNode.addObject("VisualStyle", name="visual_options", displayFlags="showForceFields showCollisionModels showBehaviorModels showDetectionOutputs")
 
+	rootNode.addObject("MeshVTKLoader", name="mesh_loader_coarse", filename="../PneuNets_remeshed.vtk")
+
+	rootNode.addObject("AttachBodyButtonSetting", name="mouse_config", stiffness=1)
+	
     ##########################################
     # Collision pipeline definition : broad phase / narrow phase / response
 	rootNode.addObject("CollisionPipeline", name="collision_pipeline")
 	rootNode.addObject("BruteForceBroadPhase", name="broad_phase") # Broad phase
 	rootNode.addObject("BVHNarrowPhase", name="narrow_phase") # Narrow phase
-	rootNode.addObject("MinProximityIntersection", name="narrow_phase_intersection", alarmDistance="0.5", contactDistance="0.25") #Intersection method used for the narrow phase
+	rootNode.addObject("MinProximityIntersection", name="narrow_phase_intersection", alarmDistance="4", contactDistance="0.5") # Intersection method used for the narrow phase
 	rootNode.addObject("CollisionResponse", name="collision_response", response="PenalityContactForceField") # Reponse method when a contact is detected in the narrow phase
 	##########################################
 	
@@ -99,8 +104,8 @@ def createScene(rootNode):
 
 	mechanicalModel.addObject("MechanicalObject", template="Vec3", name="state_container", showObject=True)
 	
-	mechanicalModel.addObject("TetrahedronFEMForceField", name="elastic_material_law", template="Vec3", poissonRatio=0.3, youngModulus=100)
-	mechanicalModel.addObject("MeshMatrixMass", name="mass", template="Vec3,Vec3", totalMass=0.5)
+	mechanicalModel.addObject("TetrahedronFEMForceField", name="elastic_material_law", template="Vec3", poissonRatio=0.3, youngModulus=scene_unit(800, kPa))
+	mechanicalModel.addObject("MeshMatrixMass", name="mass", template="Vec3,Vec3", massDensity=scene_unit(1e3, kg/m**3))
 	
 	mechanicalModel.addObject("BoxROI", name="box_ROI", box=[-10, 0, -20, 0, 30, 20], drawBoxes=True,
 						      position=mechanicalModel.state_container.position.linkpath,
